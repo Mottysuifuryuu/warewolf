@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>{{ day }}日目夜</h1>
-    <p>{{ member }}人目の夜行動です</p>
+    <p>{{ playerId }}さんの夜行動です</p>
   </div>
 </template>
 <script lang="ts">

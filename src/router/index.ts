@@ -2,6 +2,10 @@ import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import Home from '../views/Home.vue';
 import Night from '../views/Night.vue';
+import Rule from '../views/Rule.vue';
+import Players from '../views/Players.vue';
+import Sounds from '../views/Sounds.vue';
+
 
 Vue.use(VueRouter)
 
@@ -23,6 +27,21 @@ const routes: Array<RouteConfig> = [
     path: '/night/:day/:member',
     name: 'Night',
     component: Night
+  },
+  {
+    path: '/rule',
+    name: 'Rule',
+    component: Rule
+  },
+  {
+    path: '/players',
+    name: 'Players',
+    component: Players
+  },
+  {
+    path: '/sounds',
+    name: 'Sounds',
+    component: Sounds
   },
 ]
 

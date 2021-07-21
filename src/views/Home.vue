@@ -2,10 +2,12 @@
   <div class="home">
     <h1>Warewolf</h1>
     <p>テーブル用人狼ゲームマスターシステム</p>
-    <button @click="gameStart">ゲームスタート</button>
-    <button @click="rule">ルール設定</button>
-    <button @click="member">人数設定</button>
-    <button @click="sound">サウンド</button>
+    <div class="d-flex flex-column">
+      <v-btn class="mx-15 my-4" @click="gameStart">ゲームスタート</v-btn>
+      <v-btn class="mx-15 my-4" @click="rule">ルール設定</v-btn>
+      <v-btn class="mx-15 my-4" @click="players">人数設定</v-btn>
+      <v-btn class="mx-15 my-4" @click="sounds">サウンド</v-btn>
+    </div>
   </div>
 </template>
 
@@ -22,8 +24,17 @@ export default Vue.extend({
       router.push({ name: 'Night', params: {
         day: '1',
         member: '1'
-      } });
-    }
+      }});
+    },
+    rule() {
+      router.push({ name: 'Rule' });
+    },
+    players() {
+      router.push({ name: 'Players' });
+    },
+    sounds() {
+      router.push({ name: 'Sounds' });
+    },
   }
 });
 </script>
