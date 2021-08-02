@@ -9,46 +9,31 @@
     <div class="d-flex justify-center">
       <v-btn class="mr-12" @click="addPlayer()">追加</v-btn>
     </div>
-    <div class="body1 d-flex justify-end">
-      <label style="margin: 24px;">人狼</label>  
-      <input type="number" min=1 max=wolfM v-model.number="wolf" name="wolf" style="border:2px #000000 solid; border-radius: 10px;">
-    </div>
-    <div class="body1 d-flex justify-end">
-      <label style="margin: 24px;">狂人</label>
-      <input type="number" min=0 v-model.number="lunatic" name="lunatic" style="border:2px #000000 solid; border-radius: 10px;">
-    </div>
-  <div class="body2 d-flex justify-end">
-      <label style="margin: 24px;">占い師</label>
-      <input type="number" min=0 v-model.number="caster" name="caster" style="border:2px #000000 solid; border-radius: 10px;">
-  </div>
-  <div class="body2 d-flex justify-end">
-    <label style="margin: 24px;">霊媒師</label>
-    <input type="number" min=0 v-model.number="shaman" name="shaman" style="border:2px #000000 solid; border-radius: 10px;">
-  </div>
-  <div class="body2 d-flex justify-end">
-    <label style="margin: 24px;">狩人</label>
-    <input type="number" min=0 v-model.number="hunter" name="hunter" style="border:2px #000000 solid; border-radius: 10px;">
-  </div>
-  <div class="body2 d-flex justify-end">
-    <label style="margin: 24px;">村人</label>
-    <input type="number" min=0 v-model.number="villager" name="villager" style="border:2px #000000 solid; border-radius: 10px;">
-  </div>
-  <div class="body2 d-flex justify-end">
-    <label style="margin: 24px;">共有者</label>
-    <input type="number" min=0 v-model.number="syncronyzer" name="syncronyzer" style="border:2px #000000 solid; border-radius: 10px;">
-  </div>
-  <div class="body2 d-flex justify-end">
-    <label style="margin: 24px;">逃亡者</label>
-    <input type="number" min=0 v-model.number="somnumbulist" name="somnumbulist" style="border:2px #000000 solid; border-radius: 10px;">
-  </div>
-  <div class="body2 d-flex justify-end">
-    <label style="margin: 24px;">追跡者</label>
-    <input type="number" min=0 v-model.number="chaser" name="chaser" style="border:2px #000000 solid; border-radius: 10px;">
-  </div>
-  <div class="body3 d-flex justify-end">
-    <label style="margin: 24px;">妖狐</label>
-    <input type="number" min=0 v-model.number="fox" name="fox" style="border:2px #000000 solid; border-radius: 10px;"/>
-  </div>
+    <v-row dense class="mt-8">
+      <v-col
+        sm="6"
+        xs="12"
+        v-for="(role, name) in roles" :key="role.name"
+      >
+        <v-card
+          class="d-flex ma-4"
+          :color="role.color"
+        >
+          <v-card-title class="ml-4">
+            <h4>{{ role.name }}</h4>
+          </v-card-title>
+          <v-spacer/>
+          <v-card-actions class="mr-6">
+            <el-input-number
+              ref="numberInput"
+              v-model.number="role.count"
+              :min="name === 'wolf' ? 1 : 0"
+              :max="name === 'wolf' ? (players.length - 1 - roles.fox.count) / 2 : players.length - roleSum + role.count"
+            />
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -61,17 +46,68 @@ export default Vue.extend({
   data() {
     return {
       players: ['', '', ''],
-      wolf: 1,
-      lunatic: 0,
-      caster: 1,
-      shaman: 0,
-      hunter: 0,
-      villager: 0,
-      syncronyzer: 0,
-      somnumbulist: 0,
-      chaser: 0,
-      fox: 0,
+      roles: {
+        wolf: {
+          name: '人狼',
+          count: 1,
+          color: '#C62828',
+        },
+        lunatic: {
+          name: '狂人',
+          count: 0,
+          color: '#C62828',
+        },
+        caster: {
+          name: '占い師',
+          count: 1,
+          color: '#689F38',
+        },
+        shaman: {
+          name: '霊媒師',
+          count: 0,
+          color: '#689F38',
+        },
+        hunter: {
+          name: '狩人',
+          count: 0,
+          color: '#689F38',
+        },
+        villager: {
+          name: '村人',
+          count: 0,
+          color: '#689F38',
+        },
+        syncronizer: {
+          name: '共有者',
+          count: 0,
+          color: '#689F38',
+        },
+        somnubulist: {
+          name: '逃亡者',
+          count: 0,
+          color: '#689F38',
+        },
+        chaser: {
+          name: '追跡者',
+          count: 0,
+          color: '#689F38',
+        },
+        fox: {
+          name: '妖狐',
+          count: 0,
+          color: '#FFEE58',
+        },
+      },
     }
+  },
+  computed: {
+    roleSum(): number {
+      let sum = 0;
+      for (const role of Object.values(this.roles)) {
+        sum += role.count;
+      }
+      return sum;
+    },
   },
   methods: {
     deletePlayer(index: number) {
@@ -88,22 +124,13 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.body1 {
-  margin: 20px;
-  padding: 5px;
-  background-color: red;
-  font-weight: bolder;
-}
-.body2 {
-  margin: 20px;
-  padding: 5px;
-  background-color: green;
-  font-weight: bolder;
-}
-.body3 {
-  margin: 20px;
-  padding: 5px;
-  background-color: yellow;
-  font-weight: bolder;
+.v-text-field >>> input {
+  font-size: 1.4em;
+  text-transform: capitalize;
 }
 </style>
+<style>
+input {
+  pointer-events: none;
+}
+</style>>

@@ -9,6 +9,8 @@ import Sounds from '../views/Sounds.vue';
 
 Vue.use(VueRouter)
 
+new Vue({ el: '#components-demo' })
+
 const routes: Array<RouteConfig> = [
   {
     path: '/',
