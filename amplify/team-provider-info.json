@@ -1,0 +1,15 @@
+{
+  "develop": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-warewolf-develop-03755-authRole",
+      "UnauthRoleArn": "arn:aws:iam::507401782414:role/amplify-warewolf-develop-03755-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::507401782414:role/amplify-warewolf-develop-03755-authRole",
+      "Region": "ap-northeast-1",
+      "DeploymentBucketName": "amplify-warewolf-develop-03755-deployment",
+      "UnauthRoleName": "amplify-warewolf-develop-03755-unauthRole",
+      "StackName": "amplify-warewolf-develop-03755",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:507401782414:stack/amplify-warewolf-develop-03755/9d425470-f3a7-11eb-a2e0-0e56ddd08627",
+      "AmplifyAppId": "d32py7v97aqq2r"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+type Game @model {
+  id: ID!
+  clock: Int!
+  players: [Player] @connection(keyName: "byGame", fields: ["id"])
+}
+
+type Player @model @key(name: "byGame", fields: ["gameId"]) {
+  id: ID!
+  gameId: ID!
+  name: String!
+  role: Int!
+  diedAt: Int!
+}

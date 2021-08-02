@@ -34,11 +34,17 @@
         </v-card>
       </v-col>
     </v-row>
+    <div>
+      <v-btn width="60" @click="back()">戻る</v-btn>
+      <v-btn width="60" @click="apply()">決定</v-btn>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import router from '@/router/index';
+
 export default Vue.extend({
   name: 'Players',
   components: {
@@ -115,6 +121,15 @@ export default Vue.extend({
     },
     addPlayer() {
       this.players.push('');
+    },
+    back() {
+      router.push({ name: 'Home' });
+    },
+    apply() {
+      if (this.players.length === this.roleSum) {
+        //
+      }
+      router.push({ name: 'Home' });
     },
   },
   mounted() {
