@@ -1,9 +1,9 @@
 <template>
-  <div class="ma-10">
+  <div class="mt-6 d-flex flex-column align-center">
     <v-btn @click="setVisible(true)">表示</v-btn>
-    <div v-if="visible">
+    <div v-if="visible" class="d-flex flex-column align-center">
       <h1 class="my-6">あなたは狂人です</h1>
-      <div class="my-6">人狼に味方し、彼らの勝利を扶けてください。</div>
+      <div class="my-6">人狼に味方し、彼らの勝利を助けてください。</div>
       <v-btn @click="setDone()">確認</v-btn>
     </div>
   </div>
@@ -16,23 +16,24 @@ export default Vue.extend({
   name: "Lunatic",
   components: {},
   props: {
+    done: {
+      type: Boolean,
+      default: false,
+    },
     visible: {
       type: Boolean,
       default: false,
     },
   },
   data() {
-    return {
-      done: true,
-    };
+    return {};
   },
   methods: {
     setVisible(value: boolean) {
       this.$emit("night-visible", value);
     },
     setDone() {
-      this.done = true;
-      this.$emit("night-done", this.done);
+      this.$emit("night-done", true);
     },
   },
   mounted() {

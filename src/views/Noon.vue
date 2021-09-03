@@ -7,7 +7,7 @@
     </span>
     <v-btn @click="start" v-if="!timerOn">Start</v-btn>
     <v-btn @click="stop" v-else>Stop</v-btn>
-    <v-btn class="mt-12 yellow" @click="dusk()">投票へ</v-btn>
+    <v-btn class="mt-12 indigo" dark @click="dusk()">投票へ</v-btn>
   </div>
 </template>
 

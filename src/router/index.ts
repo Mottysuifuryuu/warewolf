@@ -9,6 +9,7 @@ import Rule from "../views/Rule.vue";
 import Players from "../views/Players.vue";
 import Sounds from "../views/Sounds.vue";
 import StartGame from "../views/StartGame.vue";
+import Continue from "../views/Continue.vue";
 
 Vue.use(VueRouter);
 
@@ -17,15 +18,6 @@ const routes: Array<RouteConfig> = [
     path: "/",
     name: "Home",
     component: Home,
-  },
-  {
-    path: "/about",
-    name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue"),
   },
   {
     path: "/night",
@@ -66,6 +58,11 @@ const routes: Array<RouteConfig> = [
     path: "/startgame",
     name: "StartGame",
     component: StartGame,
+  },
+  {
+    path: "/continue",
+    name: "Continue",
+    component: Continue,
   },
 ];
 

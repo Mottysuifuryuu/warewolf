@@ -1,28 +1,22 @@
 <template>
-  <div>
+  <div class="d-flex flex-column align-center">
     <h1>サウンド</h1>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue from "vue";
 export default Vue.extend({
-  name: 'Sounds',
-  components: {
-  },
+  name: "Sounds",
+  components: {},
   data() {
-    return {
-    }
+    return {};
   },
-  methods: {
-
-  },
+  methods: {},
   mounted() {
     //
   },
-})
+});
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

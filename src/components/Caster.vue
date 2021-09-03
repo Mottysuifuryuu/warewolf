@@ -1,27 +1,33 @@
 <template>
-  <div class="ma-10">
+  <div class="mt-6 d-flex flex-column align-center">
     <v-btn @click="setVisible(true)">表示</v-btn>
     <div v-if="visible">
       <h1 class="my-6">あなたは占い師です</h1>
-      <div class="my-6">
+      <div class="my-6 d-flex flex-column align-center">
         誰を占いますか？
-        <div>
-          <v-select
-            v-model="target"
-            :items="this.survivors"
-            item-text="name"
-            label="占い先"
-            class="port"
-            return-object
-            :disabled="done"
-          >
-          </v-select>
-          <v-btn :disabled="done || !target" @click="cast()">占う</v-btn>
-        </div>
-        <div class="ma-6 bold" v-if="done">
-          {{ target.name }}は{{
-            target.role === "wolf" ? "人狼" : "村人"
-          }}です。
+        <v-select
+          v-model="target"
+          :items="
+            this.survivors
+              .slice(0, current)
+              .concat(this.survivors.slice(current + 1))
+          "
+          item-text="name"
+          label="占い先"
+          class="port"
+          return-object
+          :disabled="done"
+        >
+        </v-select>
+        <v-btn :disabled="done || !target" @click="cast()">占う</v-btn>
+        <div v-if="done" class="mt-6">
+          <b>{{ targetName }}</b
+          >さんは<span
+            :class="targetRole === 'wolf' ? 'red--text' : 'green--text'"
+            >{{
+              targetRole === "wolf" ? "人狼です" : "人狼ではありません"
+            }}</span
+          >。
         </div>
       </div>
     </div>
@@ -29,7 +35,14 @@
 </template>
 
 <script lang="ts">
+import { Player } from "@/store/model";
 import Vue from "vue";
+
+interface Data {
+  target: Player | null;
+  targetName: string;
+  targetRole: string;
+}
 
 export default Vue.extend({
   name: "Caster",
@@ -43,21 +56,34 @@ export default Vue.extend({
       type: Array as () => string[],
       required: true,
     },
+    current: {
+      type: Number,
+      default: 0,
+    },
+    done: {
+      type: Boolean,
+      default: false,
+    },
     visible: {
       type: Boolean,
       default: false,
     },
   },
-  data() {
+  data(): Data {
     return {
-      target: "",
-      done: false,
+      target: null,
+      targetName: "",
+      targetRole: "",
     };
   },
   methods: {
     cast() {
-      this.done = true;
-      this.$emit("night-done", this.done);
+      this.$emit("night-done", true);
+      if (this.target) {
+        this.targetName = this.target.name;
+        this.targetRole = this.target.role;
+        this.target = null;
+      }
     },
     setVisible(value: boolean) {
       this.$emit("night-visible", value);

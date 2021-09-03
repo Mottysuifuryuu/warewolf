@@ -1,5 +1,5 @@
 <template>
-  <div class="ma-12">
+  <div class="d-flex flex-column align-center ma-12">
     <h1>ルール設定</h1>
     <div class="ml-12">
       <v-switch v-model="selfProtection" label="自衛アリ" />

@@ -1,25 +1,25 @@
 <template>
-  <div class="ma-12">
+  <div class="d-flex flex-column align-center ma-12" v-if="players.length > 0">
     <h1>{{ day }}日目の朝</h1>
-    <div class="ma-6">
-      昨夜の犠牲者は以下の通りです。
+    <div v-if="victims.length === 0">
+      昨夜は誰も犠牲になりませんでした。
+    </div>
+    <div v-else class="my-6 d-flex flex-column align-center">
+      以下の人物が無残な死体で発見されました。
       <ul>
         <li v-for="victim in victims" :key="victim.id">{{ victim.name }}</li>
       </ul>
-      <div v-if="victims.length === 0">
-        犠牲者は誰も出ませんでした。
-      </div>
-      <div class="my-12" v-if="status === 0">
-        <h1>村陣営の勝利です。</h1>
-        <div class="ma-6"><v-btn @click="home()">トップへ</v-btn></div>
-      </div>
-      <div class="my-12" v-if="status === 1">
-        <v-btn @click="noon()">会議開始</v-btn>
-      </div>
-      <div class="my-12" v-if="status === 2">
-        <h1>人狼陣営の勝利です。</h1>
-        <div class="ma-6"><v-btn @click="home()">トップへ</v-btn></div>
-      </div>
+    </div>
+    <div class="my-12 d-flex flex-column align-center" v-if="status === 0">
+      <h1><span class="green--text">村陣営</span>の勝利です。</h1>
+      <v-btn class="indigo my-6" dark @click="home()">トップへ</v-btn>
+    </div>
+    <div class="my-12 d-flex flex-column align-center" v-if="status === 1">
+      <v-btn class="indigo" dark @click="noon()">会議開始</v-btn>
+    </div>
+    <div class="my-12 d-flex flex-column align-center" v-if="status === 2">
+      <h1><span class="red--text">人狼陣営</span>の勝利です。</h1>
+      <v-btn class="indigo my-6" dark @click="home()">トップへ</v-btn>
     </div>
   </div>
 </template>
@@ -78,7 +78,15 @@ export default Vue.extend({
       }
       router.push({ name: "Noon" });
     },
-    home() {
+    async home() {
+      for (const player of this.players) {
+        if (player.id) {
+          await AppSyncClient.deletePlayer(player.id);
+        }
+      }
+      if (this.game) {
+        await AppSyncClient.deleteGame(this.game.id);
+      }
       router.push({ name: "Home" });
     },
   },

@@ -1,15 +1,25 @@
 <template>
-  <div v-if="survivors.length > 0">
-    <div class="ma-10" v-if="survivors.length > current">
+  <div class="d-flex flex-column align-center" v-if="survivors.length > 0">
+    <div
+      class="mt-10 d-flex flex-column align-center"
+      v-if="survivors.length > current"
+    >
       <h1>{{ day }}日目夜</h1>
-      <p>{{ survivors[current].name }}さんの夜行動です。</p>
-      <p>{{ survivors[current].name }}さん本人が下のボタンを押してください。</p>
+      <p>
+        <b>{{ survivors[current].name }}</b
+        >さんの夜行動です。
+      </p>
+      <p>
+        <b>{{ survivors[current].name }}</b
+        >さん本人が下のボタンを押してください。
+      </p>
       <Wolf
         v-if="survivors[current].role === 'wolf'"
         :players="players"
         :survivors="survivors"
         :victims="victims"
         :game="game"
+        :done="nightDone"
         :visible="visible"
         @victim="setVictim($event)"
         @night-done="setDone($event)"
@@ -17,6 +27,7 @@
       />
       <Villager
         v-if="survivors[current].role === 'villager'"
+        :done="nightDone"
         :visible="visible"
         @night-done="setDone($event)"
         @night-visible="setVisible($event)"
@@ -25,6 +36,8 @@
         v-if="survivors[current].role === 'caster'"
         :players="players"
         :survivors="survivors"
+        :current="current"
+        :done="nightDone"
         :visible="visible"
         @night-done="setDone($event)"
         @night-visible="setVisible($event)"
@@ -33,6 +46,7 @@
         v-if="survivors[current].role === 'shaman'"
         :players="players"
         :game="game"
+        :done="nightDone"
         :visible="visible"
         @night-done="setDone($event)"
         @night-visible="setVisible($event)"
@@ -40,7 +54,9 @@
       <Hunter
         v-if="survivors[current].role === 'hunter'"
         :players="players"
+        :game="game"
         :survivors="survivors"
+        :done="nightDone"
         :visible="visible"
         @huntTargets="hunt($event)"
         @night-done="setDone($event)"
@@ -48,16 +64,19 @@
       />
       <Lunatic
         v-if="survivors[current].role === 'lunatic'"
+        :done="nightDone"
         :visible="visible"
         @night-done="setDone($event)"
         @night-visible="setVisible($event)"
       />
-      <v-btn v-if="nightDone" @click="next()">次の人へ渡す</v-btn>
+      <v-btn v-if="nightDone" class="indigo mt-6" dark @click="next()"
+        >次の人へ渡す</v-btn
+      >
     </div>
     <div class="ma-12" v-if="survivors.length <= current">
       全員の行動が完了しました。
       <div class="ma-10">
-        <v-btn @click="daybreak()">夜明け</v-btn>
+        <v-btn class="indigo" dark @click="daybreak()">夜明けへ</v-btn>
       </div>
     </div>
   </div>

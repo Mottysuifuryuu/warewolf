@@ -1,43 +1,51 @@
 <template>
-  <div class="ma-12">
-    <h1>投票の時間です。</h1>
-    <span>{{ day }}日目の夕方</span>
+  <div class="d-flex flex-column align-center ma-12" v-if="players.length > 0">
+    <h1>{{ day }}日目の夕方</h1>
+    <h2>投票の時間です。</h2>
     <h2 v-if="revote === 1">投票は引き分けでした。再投票です。</h2>
-    <div class="ma-10" v-if="survivors.length > current">
-      <p>{{ survivors[current].name }}さんの投票です。</p>
-      <div>
-        <v-select
-          v-model="target"
-          :items="survivors"
-          item-text="name"
-          label="投票先"
-          class="port"
-          return-object
-        >
-        </v-select>
-        <v-btn class="mt-6" v-if="target !== null" @click="vote()"
-          >投票する</v-btn
-        >
-      </div>
+    <div
+      class="ma-10 d-flex flex-column align-center"
+      v-if="survivors.length > current"
+    >
+      <p>
+        <b>{{ survivors[current].name }}</b
+        >さんの投票です。
+      </p>
+      <v-select
+        v-model="target"
+        :items="survivors"
+        item-text="name"
+        label="投票先"
+        class="port"
+        return-object
+      >
+      </v-select>
+      <v-btn class="mt-6" v-if="target !== null" @click="vote()"
+        >投票する</v-btn
+      >
     </div>
     <v-btn
-      class="ma-10"
+      class="my-10 indigo"
+      dark
       @click="execute()"
       v-if="survivors.length <= current && revote !== 2"
       >開票する</v-btn
     >
-    <div v-if="revote === 2">
-      処刑されたのは{{ executedPlayer.name }}さんです。
-      <div class="my-12" v-if="status === 0">
-        <h1>村陣営の勝利です。</h1>
-        <div class="ma-6"><v-btn @click="home()">トップへ</v-btn></div>
+    <div v-if="revote === 2" class="my-6 d-flex flex-column align-center">
+      <span
+        >処刑されたのは<b>{{ executedPlayer.name }}</b
+        >さんです。</span
+      >
+      <div class="my-12 d-flex flex-column align-center" v-if="status === 0">
+        <h1><span class="green--text">村陣営</span>の勝利です。</h1>
+        <v-btn class="indigo my-6" dark @click="home()">トップへ</v-btn>
       </div>
-      <div class="my-12" v-if="status === 1">
-        <v-btn @click="night()">夜へ</v-btn>
+      <div class="my-12 d-flex flex-column align-center" v-if="status === 1">
+        <v-btn class="indigo" dark @click="night()">夜へ</v-btn>
       </div>
-      <div class="my-12" v-if="status === 2">
-        <h1>人狼陣営の勝利です。</h1>
-        <div class="ma-6"><v-btn @click="home()">トップへ</v-btn></div>
+      <div class="my-12 d-flex flex-column align-center" v-if="status === 2">
+        <h1><span class="red--text">人狼陣営</span>の勝利です。</h1>
+        <v-btn class="indigo my-6" dark @click="home()">トップへ</v-btn>
       </div>
     </div>
   </div>
@@ -99,7 +107,15 @@ export default Vue.extend({
       }
       router.push({ name: "Night" });
     },
-    home() {
+    async home() {
+      for (const player of this.players) {
+        if (player.id) {
+          await AppSyncClient.deletePlayer(player.id);
+        }
+      }
+      if (this.game) {
+        await AppSyncClient.deleteGame(this.game.id);
+      }
       router.push({ name: "Home" });
     },
     vote() {

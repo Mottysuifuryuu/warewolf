@@ -1,25 +1,21 @@
 <template>
-  <div>
+  <div class="d-flex flex-column align-center">
     <h1 class="ma-12">プレイ人数設定</h1>
     <div
-      class="d-flex flex-row mx-4"
+      style="width: 50%;"
+      class="d-flex flex-row"
       v-for="(player, index) in players"
       :key="index"
     >
-      <v-text-field class="mx-6" v-model="player.name" />
+      <v-text-field v-model="player.name" class="ml-8" />
       <v-btn
-        class="red"
-        dark
-        width="60"
-        v-if="players.length >= 4"
+        class="red white--text ml-8"
+        :disabled="players.length < 4"
         @click="deletePlayer(index)"
         >削除</v-btn
       >
-      <div v-if="players.length < 4" style="width: 60px" />
     </div>
-    <div class="d-flex justify-center">
-      <v-btn class="mr-12" @click="addPlayer()">追加</v-btn>
-    </div>
+    <v-btn @click="addPlayer()">追加</v-btn>
     <v-row dense class="mt-8">
       <v-col sm="6" xs="12" v-for="role in roles" :key="role.name">
         <v-card class="d-flex ma-4" :color="role.color">
@@ -42,18 +38,18 @@
         </v-card>
       </v-col>
     </v-row>
-    <div>
-      <v-row align="center" justify="space-around">
-        <v-btn class="my-5" x-large @click="back()">戻る</v-btn>
-        <v-btn
-          :disabled="roleSum !== players.length"
-          class="my-5 white--text"
-          x-large
-          color="indigo"
-          @click="apply()"
-          >決定</v-btn
-        >
-      </v-row>
+    <div class="d-flex justify-space-around mt-3" style="width: 100%;">
+      <v-btn x-large @click="back()">戻る</v-btn>
+      <v-btn
+        :disabled="
+          roleSum !== players.length || players.find((item) => item.name === '')
+        "
+        class="white--text"
+        x-large
+        color="indigo"
+        @click="apply()"
+        >決定</v-btn
+      >
     </div>
   </div>
 </template>
@@ -135,30 +131,30 @@ export default Vue.extend({
           count: 0,
           color: "#689F38",
         },
-        {
-          id: "synchronizer",
-          name: "共有者",
-          count: 0,
-          color: "#689F38",
-        },
-        {
-          id: "somnubulist",
-          name: "逃亡者",
-          count: 0,
-          color: "#689F38",
-        },
-        {
-          id: "chaser",
-          name: "追跡者",
-          count: 0,
-          color: "#689F38",
-        },
-        {
-          id: "fox",
-          name: "妖狐",
-          count: 0,
-          color: "#FFEE58",
-        },
+        // {
+        //   id: "synchronizer",
+        //   name: "共有者",
+        //   count: 0,
+        //   color: "#689F38",
+        // },
+        // {
+        //   id: "somnubulist",
+        //   name: "逃亡者",
+        //   count: 0,
+        //   color: "#689F38",
+        // },
+        // {
+        //   id: "chaser",
+        //   name: "追跡者",
+        //   count: 0,
+        //   color: "#689F38",
+        // },
+        // {
+        //   id: "fox",
+        //   name: "妖狐",
+        //   count: 0,
+        //   color: "#FFEE58",
+        // },
       ],
     };
   },
@@ -196,11 +192,6 @@ export default Vue.extend({
       router.push({ name: "Home" });
     },
     async apply() {
-      await AppSyncClient.createGame({
-        id: this.gameId,
-        clock: -1,
-        players: [],
-      });
       const shuffledRoleList = shuffle(this.roleList);
       for (const player of this.players) {
         player.gameId = this.gameId;

@@ -15,6 +15,10 @@ import {
   UpdateGameMutation,
   UpdatePlayerInput,
   UpdatePlayerMutation,
+  DeletePlayerInput,
+  DeletePlayerMutation,
+  DeleteGameInput,
+  DeleteGameMutation,
 } from "@/API";
 
 export default class AppSyncClient {
@@ -39,6 +43,19 @@ export default class AppSyncClient {
       game.updatedAt = data.createGame.updatedAt;
       game.createdAt = data.createGame.createdAt;
       return game;
+    }
+    return null;
+  }
+  static async deleteGame(id: string): Promise<string | null> {
+    const input: DeleteGameInput = {
+      id,
+    };
+    const result = (await API.graphql(
+      graphqlOperation(gqlMutations.deleteGame, { input })
+    )) as GraphQLResult;
+    const data = result.data as DeleteGameMutation;
+    if (data.deleteGame) {
+      return id;
     }
     return null;
   }
@@ -111,6 +128,20 @@ export default class AppSyncClient {
       player.updatedAt = data.createPlayer.updatedAt;
       player.createdAt = data.createPlayer.createdAt;
       return player;
+    }
+    return null;
+  }
+
+  static async deletePlayer(id: string): Promise<string | null> {
+    const input: DeletePlayerInput = {
+      id,
+    };
+    const result = (await API.graphql(
+      graphqlOperation(gqlMutations.deletePlayer, { input })
+    )) as GraphQLResult;
+    const data = result.data as DeletePlayerMutation;
+    if (data.deletePlayer) {
+      return id;
     }
     return null;
   }

@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex flex-column align-center mt-6">
-    <h1 class="my-6">ゲーム開始</h1>
+    <h1 class="my-6">つづきから</h1>
     <v-text-field
       v-model="gameId"
       :rules="rules"
@@ -9,8 +9,7 @@
       hint="ゲームを再開する際に使用します"
       label="ゲームIDを入力"
       style="width: 30%;"
-    >
-    </v-text-field>
+    />
     <v-btn :disabled="gameId === ''" @click="apply()">
       決定
     </v-btn>
@@ -19,12 +18,12 @@
 
 <script lang="ts">
 import AppSyncClient from "@/api/AppSyncClient";
-import LocalDataService from "@/LocalDataService";
 import router from "@/router";
 import Vue from "vue";
 
 export default Vue.extend({
-  name: "StartGame",
+  name: "Continue",
+  components: {},
   data() {
     return {
       gameId: "",
@@ -32,20 +31,33 @@ export default Vue.extend({
     };
   },
   methods: {
-    apply() {
-      LocalDataService.setGameId(this.gameId);
-      AppSyncClient.createGame({
-        id: this.gameId,
-        clock: -1,
-        players: [],
-      })
-        .then(() => {
+    async apply() {
+      const game = await AppSyncClient.getGame(this.gameId);
+      if (game) {
+        if (game.players.length === 0) {
           router.push({ name: "Players" });
-        })
-        .catch(() => {
-          alert("このゲームIDはすでに使われています。");
-        });
+        }
+        switch (game.clock % 4) {
+          case 0:
+            router.push({ name: "Dawn" });
+            break;
+          case 1:
+            router.push({ name: "Noon" });
+            break;
+          case 2:
+            router.push({ name: "Dusk" });
+            break;
+          case 3:
+            router.push({ name: "Night" });
+            break;
+        }
+      } else {
+        alert("そのようなゲームIDは存在しません。");
+      }
     },
+  },
+  mounted() {
+    //
   },
 });
 </script>
