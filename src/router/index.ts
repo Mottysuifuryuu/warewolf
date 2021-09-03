@@ -35,14 +35,17 @@ const routes: Array<RouteConfig> = [
   {
     path: "/dawn",
     name: "Dawn",
+    component: Dawn,
   },
   {
     path: "/noon",
     name: "Noon",
+    component: Noon,
   },
   {
     path: "/dusk",
     name: "Dusk",
+    component: Dusk,
   },
   {
     path: "/rule",

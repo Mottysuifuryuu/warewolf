@@ -1,23 +1,28 @@
 <template>
   <div class="ma-10">
-    <h1 class="my-6">あなたは占い師です</h1>
-    <div class="my-6">
-      誰を占いますか？
-      <div>
-        <v-select
-          v-model="target"
-          :items="this.players"
-          item-text="name"
-          label="占い先"
-          class="port"
-          return-object
-          :disabled="casted"
-        >
-        </v-select>
-        <v-btn @click="casted = true">占う</v-btn>
-      </div>
-      <div class="ma-4" v-if="casted">
-        {{ target.name }}は{{ target.role === "wolf" ? "人狼" : "村人" }}です。
+    <v-btn @click="visible = true">表示</v-btn>
+    <div v-if="visible">
+      <h1 class="my-6">あなたは占い師です</h1>
+      <div class="my-6">
+        誰を占いますか？
+        <div>
+          <v-select
+            v-model="target"
+            :items="this.survivors"
+            item-text="name"
+            label="占い先"
+            class="port"
+            return-object
+            :disabled="casted"
+          >
+          </v-select>
+          <v-btn @click="casted = true">占う</v-btn>
+        </div>
+        <div class="ma-4" v-if="casted">
+          {{ target.name }}は{{
+            target.role === "wolf" ? "人狼" : "村人"
+          }}です。
+        </div>
       </div>
     </div>
   </div>
@@ -34,18 +39,22 @@ export default Vue.extend({
       type: Array as () => string[],
       required: true,
     },
+    survivors: {
+      type: Array as () => string[],
+      required: true,
+    },
   },
   data() {
     return {
       target: "",
       casted: false,
+      visible: false,
     };
   },
   methods: {},
   mounted() {
     //
   },
-  computed: {},
 });
 </script>
 

@@ -1,24 +1,42 @@
 <template>
   <div>
-    <div class="ma-10" v-if="players.length > current">
+    <div class="ma-10" v-if="survivors.length > current">
       <h1>{{ day }}日目夜</h1>
-      <p>{{ players[current].name }}さんの夜行動です</p>
+      <p>{{ survivors[current].name }}さんの夜行動です。</p>
+      <p>{{ survivors[current].name }}さん本人が下のボタンを押してください。</p>
       <Wolf
-        v-if="players[current].role === 'wolf'"
+        v-if="survivors[current].role === 'wolf'"
         :players="players"
+        :survivors="survivors"
         :victims="victims"
+        :game="game"
         @victim="setVictim($event)"
       />
-      <Villager v-if="players[current].role === 'villager'" />
-      <Caster v-if="players[current].role === 'caster'" :players="players" />
-      <Shaman v-if="players[current].role === 'shaman'" />
-      <Hunter
-        v-if="players[current].role === 'hunter'"
+      <Villager v-if="survivors[current].role === 'villager'" />
+      <Caster
+        v-if="survivors[current].role === 'caster'"
         :players="players"
-        @huntTarget="hunt($event)"
+        :survivors="survivors"
       />
-      <Lunatic v-if="players[current].role === 'lunatic'" />
+      <Shaman
+        v-if="survivors[current].role === 'shaman'"
+        :players="players"
+        :game="game"
+      />
+      <Hunter
+        v-if="survivors[current].role === 'hunter'"
+        :players="players"
+        :survivors="survivors"
+        @huntTargets="hunt($event)"
+      />
+      <Lunatic v-if="survivors[current].role === 'lunatic'" />
       <v-btn @click="current += 1">次の人へ渡す</v-btn>
+    </div>
+    <div class="ma-12" v-if="survivors.length <= current">
+      全員の行動が完了しました。
+      <div class="ma-10">
+        <v-btn @click="daybreak()">夜明け</v-btn>
+      </div>
     </div>
   </div>
 </template>
@@ -41,7 +59,7 @@ interface NightData {
   players: Player[];
   current: number;
   victims: Player[];
-  huntTarget: Player[];
+  huntTargets: Player[];
 }
 
 export default Vue.extend({
@@ -54,12 +72,45 @@ export default Vue.extend({
       players: [],
       current: 0,
       victims: [],
-      huntTarget: [],
+      huntTargets: [],
     };
   },
+  computed: {
+    survivors(): Player[] {
+      return this.players.filter((item) => item.diedAt === -1);
+    },
+  },
   methods: {
+    async daybreak() {
+      const lastVictim = this.victims.pop();
+      let critical = "";
+      if (lastVictim) {
+        const preCriticals = this.huntTargets.filter(
+          (item) => item.id === lastVictim.id
+        );
+        if (preCriticals.length === 0) {
+          if (lastVictim.id) {
+            critical = lastVictim.id;
+          }
+        }
+      }
+      if (this.game) {
+        this.game.clock += 1;
+        await AppSyncClient.updateGame(this.game);
+        if (lastVictim) {
+          if (critical !== "") {
+            lastVictim.diedAt = this.game.clock;
+            await AppSyncClient.updatePlayer(lastVictim);
+          }
+        }
+      }
+      router.push({ name: "Dawn" });
+    },
     setVictim(victim: Player) {
       this.victims.push(victim);
+    },
+    hunt(huntTargets: Player) {
+      this.huntTargets.push(huntTargets);
     },
   },
   async mounted() {
