@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="survivors.length > 0">
     <div class="ma-10" v-if="survivors.length > current">
       <h1>{{ day }}日目夜</h1>
       <p>{{ survivors[current].name }}さんの夜行動です。</p>
@@ -10,27 +10,49 @@
         :survivors="survivors"
         :victims="victims"
         :game="game"
+        :visible="visible"
         @victim="setVictim($event)"
+        @night-done="setDone($event)"
+        @night-visible="setVisible($event)"
       />
-      <Villager v-if="survivors[current].role === 'villager'" />
+      <Villager
+        v-if="survivors[current].role === 'villager'"
+        :visible="visible"
+        @night-done="setDone($event)"
+        @night-visible="setVisible($event)"
+      />
       <Caster
         v-if="survivors[current].role === 'caster'"
         :players="players"
         :survivors="survivors"
+        :visible="visible"
+        @night-done="setDone($event)"
+        @night-visible="setVisible($event)"
       />
       <Shaman
         v-if="survivors[current].role === 'shaman'"
         :players="players"
         :game="game"
+        :visible="visible"
+        @night-done="setDone($event)"
+        @night-visible="setVisible($event)"
       />
       <Hunter
         v-if="survivors[current].role === 'hunter'"
         :players="players"
         :survivors="survivors"
+        :visible="visible"
         @huntTargets="hunt($event)"
+        @night-done="setDone($event)"
+        @night-visible="setVisible($event)"
       />
-      <Lunatic v-if="survivors[current].role === 'lunatic'" />
-      <v-btn @click="current += 1">次の人へ渡す</v-btn>
+      <Lunatic
+        v-if="survivors[current].role === 'lunatic'"
+        :visible="visible"
+        @night-done="setDone($event)"
+        @night-visible="setVisible($event)"
+      />
+      <v-btn v-if="nightDone" @click="next()">次の人へ渡す</v-btn>
     </div>
     <div class="ma-12" v-if="survivors.length <= current">
       全員の行動が完了しました。
@@ -60,6 +82,8 @@ interface NightData {
   current: number;
   victims: Player[];
   huntTargets: Player[];
+  nightDone: boolean;
+  visible: boolean;
 }
 
 export default Vue.extend({
@@ -73,6 +97,8 @@ export default Vue.extend({
       current: 0,
       victims: [],
       huntTargets: [],
+      nightDone: false,
+      visible: false,
     };
   },
   computed: {
@@ -111,6 +137,17 @@ export default Vue.extend({
     },
     hunt(huntTargets: Player) {
       this.huntTargets.push(huntTargets);
+    },
+    setDone(value: boolean) {
+      this.nightDone = value;
+    },
+    setVisible(value: boolean) {
+      this.visible = value;
+    },
+    next() {
+      this.current += 1;
+      this.visible = false;
+      this.nightDone = false;
     },
   },
   async mounted() {

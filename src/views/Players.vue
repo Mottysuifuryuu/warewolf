@@ -8,9 +8,11 @@
     >
       <v-text-field class="mx-6" v-model="player.name" />
       <v-btn
+        class="red"
+        dark
         width="60"
         v-if="players.length >= 4"
-        @click="deletePlayer(index - 1)"
+        @click="deletePlayer(index)"
         >削除</v-btn
       >
       <div v-if="players.length < 4" style="width: 60px" />
@@ -41,16 +43,17 @@
       </v-col>
     </v-row>
     <div>
-      <v-col align="center" justify="space-around">
-        <v-btn class="my-5" x-large dark color="indigo" @click="back()"
-          >戻る</v-btn
+      <v-row align="center" justify="space-around">
+        <v-btn class="my-5" x-large @click="back()">戻る</v-btn>
+        <v-btn
+          :disabled="roleSum !== players.length"
+          class="my-5 white--text"
+          x-large
+          color="indigo"
+          @click="apply()"
+          >決定</v-btn
         >
-        <div v-if="roleSum === players.length">
-          <v-btn class="my-5" x-large dark color="indigo" @click="apply()"
-            >決定</v-btn
-          >
-        </div>
-      </v-col>
+      </v-row>
     </div>
   </div>
 </template>
@@ -219,7 +222,6 @@ export default Vue.extend({
 <style scoped>
 .v-text-field >>> input {
   font-size: 1.4em;
-  text-transform: capitalize;
 }
 </style>
 <style>

@@ -1,6 +1,6 @@
 <template>
   <div class="ma-10">
-    <v-btn @click="visible = true">表示</v-btn>
+    <v-btn @click="setVisible(true)">表示</v-btn>
     <div v-if="visible">
       <h1 class="my-6">あなたは狩人です</h1>
       <div class="my-6">
@@ -20,7 +20,7 @@
             <span>{{ target.name }}</span>
             <span>を護衛しました。</span>
           </div>
-          <v-btn @click="protect()" :disabled="done">護衛する</v-btn>
+          <v-btn @click="protect()" :disabled="done || !target">護衛する</v-btn>
         </div>
         <div>自衛は{{ selfProtection ? "可能" : "不可能" }}です。</div>
         <div>
@@ -40,7 +40,6 @@ interface Data {
   selfProtection: boolean;
   consectiveProtection: boolean;
   target: Player | null;
-  visible: boolean;
 }
 
 export default Vue.extend({
@@ -55,6 +54,10 @@ export default Vue.extend({
       type: Array as () => string[],
       required: true,
     },
+    visible: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -62,13 +65,16 @@ export default Vue.extend({
       consectiveProtection: true,
       done: false,
       target: null,
-      visible: false,
     };
   },
   methods: {
     protect() {
       this.$emit("huntTargets", this.target);
       this.done = true;
+      this.$emit("night-done", this.done);
+    },
+    setVisible(value: boolean) {
+      this.$emit("night-visible", value);
     },
   },
   mounted() {

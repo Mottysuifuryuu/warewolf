@@ -57,6 +57,9 @@ export default Vue.extend({
       return this.players.filter((item) => item.diedAt === -1);
     },
     status(): number {
+      if (this.survivors.length === 0) {
+        return -1;
+      }
       const aliveWolves = this.survivors.filter((item) => item.role === "wolf");
       if (aliveWolves.length === 0) {
         return 0;

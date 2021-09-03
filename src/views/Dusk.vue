@@ -120,6 +120,7 @@ export default Vue.extend({
         key,
         value,
       }));
+      console.log(countList);
       countList.sort((a, b) => {
         if (a.value < b.value) {
           return 1;
@@ -142,6 +143,16 @@ export default Vue.extend({
               await AppSyncClient.updatePlayer(this.executedPlayer);
               this.revote = 2;
             }
+          }
+        } else {
+          const executedPlayers = this.players.filter(
+            (item) => item.id === countList[0].key
+          );
+          if (executedPlayers.length > 0 && this.game) {
+            this.executedPlayer = executedPlayers[0];
+            this.executedPlayer.diedAt = this.game.clock;
+            await AppSyncClient.updatePlayer(this.executedPlayer);
+            this.revote = 2;
           }
         }
       }
