@@ -77,3 +77,31 @@ export const listPlayers = /* GraphQL */ `
     }
   }
 `;
+export const listPlayersByGame = /* GraphQL */ `
+  query ListPlayersByGame(
+    $gameId: ID
+    $sortDirection: ModelSortDirection
+    $filter: ModelPlayerFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listPlayersByGame(
+      gameId: $gameId
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        gameId
+        name
+        role
+        diedAt
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;

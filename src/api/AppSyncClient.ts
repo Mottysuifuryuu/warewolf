@@ -3,7 +3,19 @@ import * as gqlQueries from "@/graphql/queries";
 import * as gqlMutations from "@/graphql/mutations";
 import { GraphQLResult } from "@aws-amplify/api-graphql";
 import { Game, Player } from "@/store/model";
-import { CreateGameInput, CreateGameMutation, CreatePlayerInput, CreatePlayerMutation, GetGameQuery, GetPlayerQuery, UpdateGameInput, UpdateGameMutation, UpdatePlayerInput, UpdatePlayerMutation } from "@/API";
+import {
+  CreateGameInput,
+  CreateGameMutation,
+  CreatePlayerInput,
+  CreatePlayerMutation,
+  GetGameQuery,
+  GetPlayerQuery,
+  ListPlayersByGameQuery,
+  UpdateGameInput,
+  UpdateGameMutation,
+  UpdatePlayerInput,
+  UpdatePlayerMutation,
+} from "@/API";
 
 export default class AppSyncClient {
   static notNull<T>(item: T | null | undefined): item is T {
@@ -82,8 +94,30 @@ export default class AppSyncClient {
   /*
     Player
   */
-    static async createPlayer(player: Player): Promise<Player | null> {
-      const input: CreatePlayerInput = {
+  static async createPlayer(player: Player): Promise<Player | null> {
+    const input: CreatePlayerInput = {
+      id: player.id,
+      gameId: player.gameId,
+      name: player.name,
+      role: player.role,
+      diedAt: player.diedAt,
+    };
+    const result = (await API.graphql(
+      graphqlOperation(gqlMutations.createPlayer, { input })
+    )) as GraphQLResult;
+    const data = result.data as CreatePlayerMutation;
+    if (data.createPlayer) {
+      player.id = data.createPlayer.id;
+      player.updatedAt = data.createPlayer.updatedAt;
+      player.createdAt = data.createPlayer.createdAt;
+      return player;
+    }
+    return null;
+  }
+
+  static async updatePlayer(player: Player): Promise<Player | null> {
+    if (player.id) {
+      const input: UpdatePlayerInput = {
         id: player.id,
         gameId: player.gameId,
         name: player.name,
@@ -91,56 +125,57 @@ export default class AppSyncClient {
         diedAt: player.diedAt,
       };
       const result = (await API.graphql(
-        graphqlOperation(gqlMutations.createPlayer, { input })
+        graphqlOperation(gqlMutations.updatePlayer, { input })
       )) as GraphQLResult;
-      const data = result.data as CreatePlayerMutation;
-      if (data.createPlayer) {
-        player.id = data.createPlayer.id;
-        player.updatedAt = data.createPlayer.updatedAt;
-        player.createdAt = data.createPlayer.createdAt;
+      const data = result.data as UpdatePlayerMutation;
+      if (data.updatePlayer) {
+        player.updatedAt = data.updatePlayer.updatedAt;
         return player;
       }
-      return null;
     }
-  
-    static async updatePlayer(player: Player): Promise<Player | null> {
-      if (player.id) {
-        const input: UpdatePlayerInput = {
-          id: player.id,
-          gameId: player.gameId,
-          name: player.name,
-          role: player.role,
-          diedAt: player.diedAt,
+    return null;
+  }
+
+  static async getPlayer(id: string): Promise<Player | null> {
+    const result = (await API.graphql(
+      graphqlOperation(gqlQueries.getPlayer, { id })
+    )) as GraphQLResult;
+    const data = result.data as GetPlayerQuery;
+    if (data.getPlayer) {
+      const player: Player = {
+        id: data.getPlayer.id,
+        gameId: data.getPlayer.gameId,
+        name: data.getPlayer.name,
+        role: data.getPlayer.role,
+        diedAt: data.getPlayer.diedAt,
+        createdAt: data.getPlayer.createdAt,
+        updatedAt: data.getPlayer.updatedAt,
+      };
+      return player;
+    }
+    return null;
+  }
+
+  static async listPlayers(gameId: string): Promise<Player[]> {
+    const result = (await API.graphql(
+      graphqlOperation(gqlQueries.listPlayersByGame, { gameId })
+    )) as GraphQLResult;
+    const data = result.data as ListPlayersByGameQuery;
+    if (data.listPlayersByGame && data.listPlayersByGame.items) {
+      const items = data.listPlayersByGame.items.filter(this.notNull);
+      const players: Player[] = items.map((item) => {
+        return {
+          id: item.id,
+          gameId: item.gameId,
+          name: item.name,
+          role: item.role,
+          diedAt: item.diedAt,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
         };
-        const result = (await API.graphql(
-          graphqlOperation(gqlMutations.updatePlayer, { input })
-        )) as GraphQLResult;
-        const data = result.data as UpdatePlayerMutation;
-        if (data.updatePlayer) {
-          player.updatedAt = data.updatePlayer.updatedAt;
-          return player;
-        }
-      }
-      return null;
+      });
+      return players;
     }
-  
-    static async getPlayer(id: string): Promise<Player | null> {
-      const result = (await API.graphql(
-        graphqlOperation(gqlQueries.getPlayer, { id })
-      )) as GraphQLResult;
-      const data = result.data as GetPlayerQuery;
-      if (data.getPlayer) {
-        const player: Player = {
-          id: data.getPlayer.id,
-          gameId: data.getPlayer.gameId,
-          name: data.getPlayer.name,
-          role: data.getPlayer.role,
-          diedAt: data.getPlayer.diedAt,
-          createdAt: data.getPlayer.createdAt,
-          updatedAt: data.getPlayer.updatedAt,
-        };
-        return player;
-      }
-      return null;
-    }
+    return [];
+  }
 }

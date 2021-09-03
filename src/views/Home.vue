@@ -21,7 +21,7 @@ export default Vue.extend({
   },
   methods: {
     gameStart() {
-      router.push({ name: 'Night', params: {
+      router.push({ name: 'StartGame', params: {
         day: '1',
         member: '1'
       }});

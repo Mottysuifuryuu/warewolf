@@ -1,56 +1,75 @@
-import Vue from 'vue';
-import VueRouter, { RouteConfig } from 'vue-router';
-import Home from '../views/Home.vue';
-import Night from '../views/Night.vue';
-import Rule from '../views/Rule.vue';
-import Players from '../views/Players.vue';
-import Sounds from '../views/Sounds.vue';
+import Vue from "vue";
+import VueRouter, { RouteConfig } from "vue-router";
+import Home from "../views/Home.vue";
+import Night from "../views/Night.vue";
+import Dawn from "../views/Dawn.vue";
+import Noon from "../views/Noon.vue";
+import Dusk from "../views/Dusk.vue";
+import Rule from "../views/Rule.vue";
+import Players from "../views/Players.vue";
+import Sounds from "../views/Sounds.vue";
+import StartGame from "../views/StartGame.vue";
 
-
-Vue.use(VueRouter)
-
-new Vue({ el: '#components-demo' })
+Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
   {
-    path: '/',
-    name: 'Home',
-    component: Home
+    path: "/",
+    name: "Home",
+    component: Home,
   },
   {
-    path: '/about',
-    name: 'About',
+    path: "/about",
+    name: "About",
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/About.vue"),
   },
   {
-    path: '/night/:day/:member',
-    name: 'Night',
-    component: Night
+    path: "/night",
+    name: "Night",
+    component: Night,
   },
   {
-    path: '/rule',
-    name: 'Rule',
-    component: Rule
+    path: "/dawn",
+    name: "Dawn",
   },
   {
-    path: '/players',
-    name: 'Players',
-    component: Players
+    path: "/noon",
+    name: "Noon",
   },
   {
-    path: '/sounds',
-    name: 'Sounds',
-    component: Sounds
+    path: "/dusk",
+    name: "Dusk",
   },
-]
+  {
+    path: "/rule",
+    name: "Rule",
+    component: Rule,
+  },
+  {
+    path: "/players",
+    name: "Players",
+    component: Players,
+  },
+  {
+    path: "/sounds",
+    name: "Sounds",
+    component: Sounds,
+  },
+  {
+    path: "/startgame",
+    name: "StartGame",
+    component: StartGame,
+  },
+];
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   base: process.env.BASE_URL,
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;

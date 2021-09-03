@@ -4,10 +4,12 @@ type Game @model {
   players: [Player] @connection(keyName: "byGame", fields: ["id"])
 }
 
-type Player @model @key(name: "byGame", fields: ["gameId"]) {
+type Player
+  @model
+  @key(name: "byGame", fields: ["gameId"], queryField: "listPlayersByGame") {
   id: ID!
   gameId: ID!
   name: String!
-  role: Int!
+  role: String!
   diedAt: Int!
 }
